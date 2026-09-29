@@ -5,7 +5,7 @@ Customized version of FlexUnits.jl for pressure vessel development.
 """
 module VesselUnits
 
-# Names exported from this package
+# Export constant variables from this package
 export inch, mm, lb, kg, lbf, °F, °C, psi, MPa, kPa, bar, atm, STEEL_DENSITY
 
 # Load and reexport dependencies
@@ -44,7 +44,7 @@ set_preferred_unit(lb/inch^3)
 
 display_simplified_units(true)  # Always convert to simple preferred units
 
-end
+end  # module
 
 #--The code below can be used to create a new unit registry rather than modifying the default one.--#
 # # Load Default Unit Registry
