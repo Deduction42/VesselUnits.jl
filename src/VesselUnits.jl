@@ -5,16 +5,29 @@ Customized version of FlexUnits.jl for pressure vessel development.
 """
 module VesselUnits
 
-# Export constant variables from this package
-export inch, mm, lb, kg, lbf, °F, °C, psi, MPa, kPa, bar, atm, STEEL_DENSITY
+# Export names from this package
+export inch, mm, lb, kg, lbf, °F, °C, psi, MPa, kPa, bar, atm
+export STEEL_DENSITY
+export simplify, set_preferred_unit
 
-# Load and reexport dependencies
-using Reexport
-@reexport using FlexUnits
-@reexport using .UnitRegistry
+# Load dependencies
+using FlexUnits.RegistryTools
+using FlexUnits: set_preferred_unit, display_simplified_units, simplify
 
-# Add units
-register_unit("atm" => 101.325 * u"kPa")
+# Define the unit registry as an empty dictionary
+const UNITS = PermanentDict{Symbol,Units{Dimensions{FixRat32},AffineTransform{Float64}}}()
+
+# Add default units and register new ones to UNITS dictionary
+registry_defaults!(UNITS)
+register_unit!(UNITS, "atm" => 101.325 * UNITS[:kPa])
+
+# Define preferred units
+const PREFERRED_UNITS = [UNITS[u] for u in [:F, :H, :T, :Ω, :V, :W, :J, :Pa, :N, :C, :L]]
+# const PREFERRED_UNITS = [UNITS[u] for u in [:inch, :lb, :lbf, :Ra, :psi]]
+
+# Generate simplifiers and exports for defined units with included macros
+@generate_unit_simplifier(PREFERRED_UNITS)
+@generate_registry_exports(UNITS)
 
 # Define selected units in namespace
 const inch = u"inch" # Imperial Length
@@ -24,6 +37,7 @@ const kg = u"kg"     # Metric Mass
 const lbf = u"lbf"   # Imperial Force
 # N is too common    # Metric Force
 const °F = u"°F"     # Imperial Temperature
+const Ra = u"Ra"     # Alternate Imperial Temperature
 const °C = u"°C"     # Metric Temperature
 const psi = u"psi"   # Imperial Pressure
 const MPa = u"MPa"   # Metric Pressure
@@ -38,21 +52,10 @@ const STEEL_DENSITY = 0.28lb/inch^3;
 set_preferred_unit(inch)
 set_preferred_unit(lb)
 set_preferred_unit(lbf)
-#set_preferred_unit(°F)  # ERROR: NotScalarError: °F cannot be treated as scalar, operation only valid for scalar units
+set_preferred_unit(Ra)  # Too dangerous to leave on °F. Temperature differences will be wrong.
 set_preferred_unit(psi)
 set_preferred_unit(lb/inch^3)
 
 display_simplified_units(true)  # Always convert to simple preferred units
 
 end  # module
-
-#--The code below can be used to create a new unit registry rather than modifying the default one.--#
-# # Load Default Unit Registry
-# using .RegistryTools
-# const UNITS = PermanentDict{Symbol, Units{Dimensions{FixRat32}, AffineTransform}}()
-# registry_defaults!(UNITS)
-# const PREFERRED_UNITS = [UNITS[u] for u in [:F, :H, :T, :Ω, :V, :W, :J, :Pa, :N, :C, :L]]
-# RegistryTools.complexity_sort!(PREFERRED_UNITS)
-# RegistryTools.preferred_units(::Type{<:Dimensions}) = PREFERRED_UNITS
-# @generate_registry_exports(UNITS)
-# export @u_str, @ud_str, @q_str, @U_str, @D_str, uparse, qparse, utype, dtype  # Copied from https://discourse.julialang.org/t/how-to-add-dimensions-in-flexunits/138886/2

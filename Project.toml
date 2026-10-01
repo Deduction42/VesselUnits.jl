@@ -3,14 +3,12 @@ uuid = "26ef9bc7-7236-4902-893f-1b04f64b91ef"
 version = "0.0.1"
 authors = ["Nathan Boyer <nathanrobertboyer@gmail.com>"]
 
+[workspace]
+projects = ["test"]
+
 [deps]
 FlexUnits = "76e01b6b-c995-4ce6-8559-91e72a3d4e95"
-Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [compat]
 FlexUnits = "0.6.8"
-Reexport = "1"
 julia = "1.12"
-
-[workspace]
-projects = ["test"]
