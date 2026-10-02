@@ -22,6 +22,7 @@ registry_defaults!(UNITS)
 register_unit!(UNITS, "kip" => 1000 * UNITS[:lbf])
 register_unit!(UNITS, "ksi" => 1000 * UNITS[:psi])
 register_unit!(UNITS, "atm" => 101.325 * UNITS[:kPa])
+register_unit!(UNITS, "mph" => UNITS[:mi] / UNITS[:hr])
 
 # Define preferred units
 const PREFERRED_UNITS = [UNITS[u] for u in [:F, :H, :T, :Ω, :V, :W, :J, :Pa, :N, :C, :L]]
